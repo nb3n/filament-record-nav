@@ -9,9 +9,10 @@
         "source": "https://github.com/nb3n/filament-record-nav"
     },
     "require": {
-        "php": "^8.1",
-        "laravel/framework": "^10.0",
-        "filament/filament": "^3.0"
+        "php": "^8.2"
+    },
+    "require-dev": {
+        "filament/filament": "^3.2"
     },
     "license": "MIT",
     "autoload": {
