@@ -174,6 +174,34 @@ class ViewPost extends ViewRecord
     }
 }
 ```
+### Custom Record URLs
+
+By default, the navigation uses the `view` route. You can customize this:
+
+```php
+<?php
+
+namespace App\Filament\Resources\PostResource\Pages;
+
+use App\Filament\Resources\PostResource;
+use Filament\Actions;
+use Filament\Resources\Pages\EditRecord;
+
+use Illuminate\Database\Eloquent\Model; 
+use Nben\FilamentRecordNav\Concerns\WithRecordNavigation;
+
+class EditPost extends EditRecord
+{
+    use WithRecordNavigation;
+
+    protected static string $resource = PostResource::class;
+
+    protected function getRecordUrl(Model $record): string
+    {
+        return static::getResource()::getUrl('edit', ['record' => $record]);
+    }
+}
+```
 
 ### Customizing Action Appearance
 
@@ -187,6 +215,7 @@ protected function getHeaderActions(): array
             ->label('← Previous')
             ->color('secondary')
             ->size('sm'),
+
         NextRecordAction::make()
             ->label('Next →')
             ->color('secondary')
