@@ -6,7 +6,14 @@
     "homepage": "https://github.com/nb3n/filament-record-nav",
     "support": {
         "issues": "https://github.com/nb3n/filament-record-nav/issues",
-        "source": "https://github.com/nb3n/filament-record-nav"
+        "source": "https://github.com/nb3n/filament-record-nav",
+        "docs": "https://github.com/nb3n/filament-record-nav#readme"
+    },
+    "suggest": {
+        "filament/spatie-laravel-media-library-plugin": "For enhanced media management in your resources",
+        "filament/spatie-laravel-settings-plugin": "For application settings management", 
+        "spatie/laravel-activitylog": "For tracking record changes and navigation history",
+        "spatie/laravel-permission": "For role-based access control in your admin panel"
     },
     "require": {
         "php": "^8.2"
