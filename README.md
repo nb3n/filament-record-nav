@@ -175,18 +175,6 @@ class ViewPost extends ViewRecord
 }
 ```
 
-### Custom Record URLs
-
-By default, the navigation uses the `view` route. You can customize this:
-
-```php
-protected function getRecordUrl(Model $record): string
-{
-    // Navigate to edit page instead of view page
-    return static::getResource()::getUrl('edit', ['record' => $record]);
-}
-```
-
 ### Customizing Action Appearance
 
 You can customize the appearance of navigation buttons:
