@@ -1,0 +1,2 @@
+# Ignore Composer's vendor directory (installed packages)
+vendor/

@@ -1,0 +1,42 @@
+{
+    "name": "nben/filament-record-nav",
+    "type": "library",
+    "description": "Next/Previous record navigation for Filament PHP",
+    "keywords": ["filament", "laravel", "navigation", "records"],
+    "homepage": "https://github.com/nb3n/filament-record-nav",
+    "support": {
+        "issues": "https://github.com/nb3n/filament-record-nav/issues",
+        "source": "https://github.com/nb3n/filament-record-nav"
+    },
+    "require": {
+        "php": "^8.1",
+        "laravel/framework": "^10.0",
+        "filament/filament": "^3.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Nben\\FilamentRecordNav\\": "src/"
+        }
+    },
+    
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Nben\\FilamentRecordNav\\FilamentRecordNavServiceProvider"
+            ],
+            "aliases": {
+                "FilamentRecordNav": "Nben\\FilamentRecordNav\\Facades\\FilamentRecordNav"
+            }
+        }
+    },
+    "authors": [
+        {
+            "name": "nb3n",
+            "email": "hello@nben.com.np",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
