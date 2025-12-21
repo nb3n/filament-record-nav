@@ -4,8 +4,8 @@ A Laravel package that adds elegant next/previous record navigation to your Fila
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![PHP Version](https://img.shields.io/badge/php-8.1-blue)
-![Laravel](https://img.shields.io/badge/laravel-10.0-red)
-![Filament](https://img.shields.io/badge/filament-3.0-orange)
+![Laravel](https://img.shields.io/badge/laravel-12.0-red)
+![Filament](https://img.shields.io/badge/filament-4.0-orange)
 
 ## Features
 
