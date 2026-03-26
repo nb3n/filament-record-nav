@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nben\FilamentRecordNav\Actions;
 
 use Filament\Actions\Action;
@@ -14,7 +16,7 @@ class NextRecordAction extends Action
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->hiddenLabel()
             ->outlined()
             ->icon('heroicon-o-chevron-right')

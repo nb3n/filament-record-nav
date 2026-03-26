@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Nben\FilamentRecordNav;
 
 use Illuminate\Support\ServiceProvider;
@@ -18,7 +20,7 @@ class FilamentRecordNavServiceProvider extends ServiceProvider
     public function register(): void
     {
         $configPath = __DIR__.'/../config/filament-record-nav.php';
-        
+
         if (file_exists($configPath)) {
             $this->mergeConfigFrom($configPath, 'filament-record-nav');
         }
