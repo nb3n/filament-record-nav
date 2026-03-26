@@ -11,15 +11,13 @@
     },
     "suggest": {
         "filament/spatie-laravel-media-library-plugin": "For enhanced media management in your resources",
-        "filament/spatie-laravel-settings-plugin": "For application settings management", 
+        "filament/spatie-laravel-settings-plugin": "For application settings management",
         "spatie/laravel-activitylog": "For tracking record changes and navigation history",
         "spatie/laravel-permission": "For role-based access control in your admin panel"
     },
     "require": {
-        "php": "^8.2"
-    },
-    "require-dev": {
-        "filament/filament": "^3.2"
+        "php": "^8.2",
+        "filament/filament": "^3.2 | ^4.0"
     },
     "license": "MIT",
     "autoload": {
@@ -27,7 +25,6 @@
             "Nben\\FilamentRecordNav\\": "src/"
         }
     },
-    
     "extra": {
         "laravel": {
             "providers": [

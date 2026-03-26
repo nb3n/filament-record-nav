@@ -18,9 +18,9 @@ A Laravel package that adds elegant next/previous record navigation to your Fila
 
 ## Requirements
 
-- PHP ^8.1
-- Laravel ^10.0
-- Filament ^3.0
+- PHP ^8.2
+- Laravel ^10.0 / ^11.0 / ^12.0 (typical with Filament)
+- Filament **^3.2** or **^4.0**
 
 ## Demo
 ![Package Demo](example.gif)
@@ -65,7 +65,19 @@ class ViewPost extends ViewRecord
 
 ### 2. Add navigation actions to your page
 
-Add the navigation actions to your page's action array:
+**Filament v4:** header actions are not configured via `configureAction()`. Return the pre-wired actions from the trait:
+
+```php
+protected function getHeaderActions(): array
+{
+    return [
+        ...$this->getRecordNavigationHeaderActions(),
+        // ... your other actions
+    ];
+}
+```
+
+**Filament v3** (or if you customize actions in `configureAction()`): register the actions as before:
 
 ```php
 <?php
@@ -99,6 +111,10 @@ class ViewPost extends ViewRecord
 
 That's it! Your Filament resource pages now have beautiful next/previous navigation buttons.
 
+**RTL panels:** set `rtl_locales` in config (e.g. `ar`, `ckb`). Chevron icons swap so “previous / next” match reading direction.
+
+**UUID route keys:** keep `order_column` as `id` (or another sortable column). URLs use `getRouteKey()` automatically.
+
 ## Configuration
 
 The package comes with sensible defaults, but you can customize the behavior by publishing and modifying the configuration file:
@@ -128,6 +144,23 @@ return [
     */
     'previous_direction' => 'desc',
     'next_direction' => 'asc',
+
+    /*
+    | Locales that use RTL — previous/next chevrons are mirrored.
+    */
+    'rtl_locales' => ['ar', 'ckb', 'he', 'fa', 'ur'],
+
+    /*
+    | Default route passed to Resource::getUrl() — 'view' or 'edit'.
+    | Override per page via getRecordNavigationUrlRoute().
+    */
+    'url_route' => 'view',
+
+    /*
+    | Optional translation keys for tooltips (passed to __()).
+    */
+    'previous_tooltip_key' => null,
+    'next_tooltip_key' => null,
 ];
 ```
 
@@ -179,32 +212,16 @@ class ViewPost extends ViewRecord
 ```
 ### Custom Record URLs
 
-By default, the navigation uses the `view` route. You can customize this:
+By default, the navigation uses the `view` route (`config('filament-record-nav.url_route')`). For edit-only resources, override the route name (URLs still use `getRouteKey()`):
 
 ```php
-<?php
-
-namespace App\Filament\Resources\PostResource\Pages;
-
-use App\Filament\Resources\PostResource;
-use Filament\Actions;
-use Filament\Resources\Pages\EditRecord;
-
-use Illuminate\Database\Eloquent\Model; 
-use Nben\FilamentRecordNav\Concerns\WithRecordNavigation;
-
-class EditPost extends EditRecord
+protected function getRecordNavigationUrlRoute(): string
 {
-    use WithRecordNavigation;
-
-    protected static string $resource = PostResource::class;
-
-    protected function getRecordUrl(Model $record): string
-    {
-        return static::getResource()::getUrl('edit', ['record' => $record]);
-    }
+    return 'edit';
 }
 ```
+
+You can still override `getRecordUrl()` entirely if you need custom parameters.
 
 ### Customizing Action Appearance
 
