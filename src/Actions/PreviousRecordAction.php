@@ -3,21 +3,108 @@
 namespace Nben\FilamentRecordNav\Actions;
 
 use Filament\Actions\Action;
+use Filament\Support\Enums\Size;
+use Livewire\Component;
+use Nben\FilamentRecordNav\Actions\Concerns\ResolvesAdjacentRecord;
+use Nben\FilamentRecordNav\Enums\NavigationPage;
 
+/**
+ * A Filament header action that navigates to the previous record.
+ *
+ * Drop into any ViewRecord or EditRecord page's getHeaderActions() method:
+ *
+ *   PreviousRecordAction::make()
+ *
+ * By default it navigates to the 'view' page of the previous record, ordered
+ * by the 'order_column' defined in config/filament-record-nav.php (default: id).
+ *
+ * The button is automatically disabled and turns gray when there is no
+ * previous record (i.e. the current record is the first one).
+ *
+ * All standard Filament Action fluent methods work normally, for example:
+ *
+ *   PreviousRecordAction::make()
+ *       ->label('← Previous')
+ *       ->color('secondary')
+ *       ->size(Size::Small)
+ *       ->tooltip('Go to previous record')
+ *       ->keyBindings(['mod+left'])
+ *
+ * To navigate to the edit page instead of view:
+ *
+ *   PreviousRecordAction::make()->navigateTo(NavigationPage::Edit)
+ *
+ * To add custom filtering logic (e.g. only navigate published posts),
+ * add the WithRecordNavigation trait to your page and override
+ * getPreviousRecord(). See WithRecordNavigation for details.
+ */
 class PreviousRecordAction extends Action
 {
+    use ResolvesAdjacentRecord;
+
+    /**
+     * The Filament page type this action navigates to.
+     * Defaults to NavigationPage::View. Change via navigateTo().
+     */
+    protected NavigationPage $navigationPage = NavigationPage::View;
+
+    /**
+     * The registered name used by Filament to identify this action.
+     * Must be unique within a page's action list.
+     */
     public static function getDefaultName(): ?string
     {
         return 'previous-record';
     }
 
+    /**
+     * Set the Filament page type to navigate to when this action is triggered.
+     *
+     * Usage:
+     *   PreviousRecordAction::make()->navigateTo(NavigationPage::Edit)
+     */
+    public function navigateTo(NavigationPage $page): static
+    {
+        $this->navigationPage = $page;
+
+        return $this;
+    }
+
+    /**
+     * Configure the action's default appearance and behaviour.
+     *
+     * All three closures (color, disabled, url) call getCachedRecord() from
+     * ResolvesAdjacentRecord, which ensures the database query runs only once
+     * per render cycle regardless of how many closures consume the result.
+     */
     protected function setUp(): void
     {
         parent::setUp();
-        
-        $this->hiddenLabel()
+
+        $this
+            ->hiddenLabel()
+            ->button()
             ->outlined()
             ->icon('heroicon-o-chevron-left')
-            ->tooltip('Previous');
+            ->tooltip('Previous')
+            ->size(Size::Medium)
+            // Gray when disabled (no previous record), primary when active.
+            ->color(function (Component $livewire): string {
+                return $this->getCachedRecord('previous', $livewire) ? 'primary' : 'gray';
+            })
+            // Disabled at the boundary (first record) - button renders but is not clickable.
+            ->disabled(function (Component $livewire): bool {
+                return $this->getCachedRecord('previous', $livewire) === null;
+            })
+            // Null URL keeps the button rendered without a broken href.
+            ->url(function (Component $livewire): ?string {
+                $record = $this->getCachedRecord('previous', $livewire);
+
+                if ($record === null) {
+                    return null;
+                }
+
+                return $this->resolveUrl($livewire, $record, $this->navigationPage);
+            });
     }
 }

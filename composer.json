@@ -19,7 +19,7 @@
         "php": "^8.2"
     },
     "require-dev": {
-        "filament/filament": "^3.2"
+        "filament/filament": "^4.0|^5.0"
     },
     "license": "MIT",
     "autoload": {
@@ -32,10 +32,7 @@
         "laravel": {
             "providers": [
                 "Nben\\FilamentRecordNav\\FilamentRecordNavServiceProvider"
-            ],
-            "aliases": {
-                "FilamentRecordNav": "Nben\\FilamentRecordNav\\Facades\\FilamentRecordNav"
-            }
+            ]
         }
     },
     "authors": [
