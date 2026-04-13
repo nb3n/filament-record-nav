@@ -4,6 +4,43 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v2.1.0] - 2026-04-13
+
+A backward-compatible feature release. No changes are required to existing code.
+
+### Added
+
+- **`NavigationPage::custom(string $routeName)`** - named constructor on the
+  `NavigationPage` enum that returns a `CustomNavigationPage` value object.
+  Allows actions to navigate to any route registered in the resource's
+  `getPages()` array, beyond the built-in `View` and `Edit` cases.
+
+  ```php
+  NextRecordAction::make()->navigateTo(NavigationPage::custom('verified-view'))
+  ```
+
+- **`CustomNavigationPage`** (`src/Enums/CustomNavigationPage.php`) - a lightweight
+  `final` value object that carries an arbitrary route name string in its
+  `readonly string $value` property. Shares the same `->value` interface as the
+  `NavigationPage` backed enum, so `resolveUrl()` calls `$page->value` on either
+  type without any `instanceof` branching.
+
+### Changed
+
+- **`navigateTo()` now accepts `NavigationPage|CustomNavigationPage`** on both
+  `NextRecordAction` and `PreviousRecordAction`. Passing a `NavigationPage` enum
+  case continues to work exactly as before.
+
+- **`resolveUrl()` type hint updated** in `ResolvesAdjacentRecord` to
+  `NavigationPage|CustomNavigationPage`. No behaviour change for existing enum cases.
+
+- **`getRecordNavigationUrl()` signature updated** in `WithRecordNavigation` and
+  `HasRecordNavigation` to accept `NavigationPage|CustomNavigationPage` as the
+  `$page` parameter. Existing overrides that type-hinted `NavigationPage` alone
+  will need the union type added if strict typing / PHPStan is in use.
+
+---
+
 ## [v2.0.0] - 2026-03-28
 
 A full rewrite targeting Filament v4 and v5. The architecture has been overhauled
