@@ -3,6 +3,7 @@
 namespace Nben\FilamentRecordNav\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
+use Nben\FilamentRecordNav\Enums\CustomNavigationPage;
 use Nben\FilamentRecordNav\Enums\NavigationPage;
 
 /**
@@ -41,6 +42,12 @@ interface HasRecordNavigation
 
     /**
      * Build the URL for the given record on the given page type.
+     *
+     * The $page parameter is either a NavigationPage enum case (View, Edit)
+     * or a CustomNavigationPage value object created via NavigationPage::custom().
      */
-    public function getRecordNavigationUrl(Model $record, NavigationPage $page): string;
+    public function getRecordNavigationUrl(
+        Model $record,
+        NavigationPage|CustomNavigationPage $page
+    ): string;
 }

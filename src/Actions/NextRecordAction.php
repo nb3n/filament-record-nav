@@ -6,6 +6,7 @@ use Filament\Actions\Action;
 use Filament\Support\Enums\Size;
 use Livewire\Component;
 use Nben\FilamentRecordNav\Actions\Concerns\ResolvesAdjacentRecord;
+use Nben\FilamentRecordNav\Enums\CustomNavigationPage;
 use Nben\FilamentRecordNav\Enums\NavigationPage;
 
 /**
@@ -34,6 +35,10 @@ use Nben\FilamentRecordNav\Enums\NavigationPage;
  *
  *   NextRecordAction::make()->navigateTo(NavigationPage::Edit)
  *
+ * To navigate to a custom route registered in getPages():
+ *
+ *   NextRecordAction::make()->navigateTo(NavigationPage::custom('verified-view'))
+ *
  * To add custom filtering logic (e.g. only navigate published posts),
  * add the WithRecordNavigation trait to your page and override
  * getNextRecord(). See WithRecordNavigation for details.
@@ -44,9 +49,12 @@ class NextRecordAction extends Action
 
     /**
      * The Filament page type this action navigates to.
+     *
+     * Accepts either a NavigationPage enum case (View, Edit) or a
+     * CustomNavigationPage value object created via NavigationPage::custom().
      * Defaults to NavigationPage::View. Change via navigateTo().
      */
-    protected NavigationPage $navigationPage = NavigationPage::View;
+    protected NavigationPage|CustomNavigationPage $navigationPage = NavigationPage::View;
 
     /**
      * The registered name used by Filament to identify this action.
@@ -60,10 +68,12 @@ class NextRecordAction extends Action
     /**
      * Set the Filament page type to navigate to when this action is triggered.
      *
-     * Usage:
+     * Accepts a NavigationPage enum case or a custom route name:
+     *
      *   NextRecordAction::make()->navigateTo(NavigationPage::Edit)
+     *   NextRecordAction::make()->navigateTo(NavigationPage::custom('verified-view'))
      */
-    public function navigateTo(NavigationPage $page): static
+    public function navigateTo(NavigationPage|CustomNavigationPage $page): static
     {
         $this->navigationPage = $page;
 

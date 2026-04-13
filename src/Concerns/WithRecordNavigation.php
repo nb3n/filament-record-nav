@@ -3,6 +3,7 @@
 namespace Nben\FilamentRecordNav\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
+use Nben\FilamentRecordNav\Enums\CustomNavigationPage;
 use Nben\FilamentRecordNav\Enums\NavigationPage;
 
 /**
@@ -45,6 +46,10 @@ use Nben\FilamentRecordNav\Enums\NavigationPage;
  *               ->first();
  *       }
  *   }
+ *
+ * With a custom route:
+ *
+ *   NextRecordAction::make()->navigateTo(NavigationPage::custom('verified-view'))
  *
  * For strict typing / IDE support, also declare the interface:
  *
@@ -110,19 +115,36 @@ trait WithRecordNavigation
     /**
      * Build the URL for navigating to $record on the given $page type.
      *
+     * The $page parameter is either a NavigationPage enum case (View, Edit)
+     * or a CustomNavigationPage value object from NavigationPage::custom().
+     * Both expose a ->value string that maps to a Filament route name.
+     *
      * The default implementation calls getResource()::getUrl() with the
-     * page type value from the NavigationPage enum ('view' or 'edit').
+     * route name from $page->value.
      *
      * Override example - always navigate to the edit page regardless of
      * what NavigationPage value was passed to the action:
      *
-     *   public function getRecordNavigationUrl(Model $record, NavigationPage $page): string
-     *   {
+     *   public function getRecordNavigationUrl(
+     *       Model $record,
+     *       NavigationPage|CustomNavigationPage $page
+     *   ): string {
      *       return static::getResource()::getUrl('edit', ['record' => $record]);
      *   }
+     *
+     * Override example - use the page value to build the URL normally:
+     *
+     *   public function getRecordNavigationUrl(
+     *       Model $record,
+     *       NavigationPage|CustomNavigationPage $page
+     *   ): string {
+     *       return static::getResource()::getUrl($page->value, ['record' => $record]);
+     *   }
      */
-    public function getRecordNavigationUrl(Model $record, NavigationPage $page): string
-    {
+    public function getRecordNavigationUrl(
+        Model $record,
+        NavigationPage|CustomNavigationPage $page
+    ): string {
         return static::getResource()::getUrl($page->value, ['record' => $record]);
     }
 

@@ -4,6 +4,7 @@ namespace Nben\FilamentRecordNav\Actions\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
+use Nben\FilamentRecordNav\Enums\CustomNavigationPage;
 use Nben\FilamentRecordNav\Enums\NavigationPage;
 
 /**
@@ -74,6 +75,11 @@ trait ResolvesAdjacentRecord
     /**
      * Build the redirect URL for $record on the given $page type.
      *
+     * Accepts either a NavigationPage enum case (View, Edit) or a
+     * CustomNavigationPage value object created via NavigationPage::custom().
+     * Both expose a ->value string property, so no instanceof branching is
+     * needed here - Resource::getUrl($page->value, ...) works for both.
+     *
      * Resolution order:
      *  1. Call getRecordNavigationUrl() on the Livewire component if it exists.
      *     This allows the page to fully control the URL (e.g. always edit page).
@@ -82,8 +88,11 @@ trait ResolvesAdjacentRecord
      *  3. Return '#' as a last resort so the button renders without crashing.
      *     In practice this branch should never be reached on a valid resource page.
      */
-    protected function resolveUrl(Component $livewire, Model $record, NavigationPage $page): string
-    {
+    protected function resolveUrl(
+        Component $livewire,
+        Model $record,
+        NavigationPage|CustomNavigationPage $page
+    ): string {
         if (method_exists($livewire, 'getRecordNavigationUrl')) {
             return $livewire->getRecordNavigationUrl($record, $page);
         }
