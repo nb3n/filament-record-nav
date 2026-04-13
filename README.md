@@ -14,7 +14,8 @@ A Laravel package that adds elegant next/previous record navigation to your Fila
 - **Filament native** - extends Filament's `Action` class, all fluent methods work
 - **Configurable** - set ordering column and direction globally via config
 - **Fully overridable** - add the trait and override any method for custom query logic
-- **Page-type aware** - choose `view` or `edit` as the target page per action
+- **Page-type aware** - choose `view`, `edit`, or any custom route as the target page per action
+- **Custom routes** - navigate to any route registered in your resource's `getPages()`
 - **Future-proof** - depends only on Filament's stable `$livewire` injection API
 - **Smart boundaries** - buttons auto-disable and turn gray at the first/last record
 - **Optimised queries** - each action fires exactly one database query per render
@@ -107,7 +108,51 @@ Or mix them:
 PreviousRecordAction::make()->navigateTo(NavigationPage::View),
 NextRecordAction::make()->navigateTo(NavigationPage::Edit),
 ```
- 
+
+---
+
+## Navigating to a Custom Route
+
+If your resource registers custom page routes beyond the standard `view` and `edit`,
+use `NavigationPage::custom()` to navigate to them by route name.
+
+First, register your custom page in the resource's `getPages()`:
+
+```php
+public static function getPages(): array
+{
+    return [
+        'index'         => ListUsers::route('/'),
+        'create'        => CreateUser::route('/create'),
+        'view'          => ViewUser::route('/{record}'),
+        'edit'          => EditUser::route('/{record}/edit'),
+        'verified-view' => ViewVerifiedUser::route('/{record}/verified'), // custom route
+    ];
+}
+```
+
+Then pass the route name string to `NavigationPage::custom()`:
+
+```php
+use Nben\FilamentRecordNav\Actions\NextRecordAction;
+use Nben\FilamentRecordNav\Actions\PreviousRecordAction;
+use Nben\FilamentRecordNav\Enums\NavigationPage;
+
+protected function getHeaderActions(): array
+{
+    return [
+        PreviousRecordAction::make()->navigateTo(NavigationPage::custom('verified-view')),
+        NextRecordAction::make()->navigateTo(NavigationPage::custom('verified-view')),
+    ];
+}
+```
+
+The route name passed to `custom()` is forwarded directly to `Resource::getUrl($routeName, ['record' => $record])`,
+so it must exactly match a key in your resource's `getPages()` array.
+
+> **Note:** Custom routes still benefit from the same smart boundary detection -
+> buttons auto-disable and turn gray when there is no adjacent record to navigate to.
+
 ---
  
 ## Customising Button Appearance
@@ -201,17 +246,33 @@ class ViewPost extends ViewRecord
  
 ### Overriding the navigation URL
  
-Override `getRecordNavigationUrl()` to fully control where the action redirects,
-regardless of what `NavigationPage` value was passed to the action:
+Override `getRecordNavigationUrl()` to fully control where the action redirects.
+The `$page` parameter is either a `NavigationPage` enum case or a `CustomNavigationPage`
+value object - both expose a `->value` string with the route name.
  
 ```php
 use Illuminate\Database\Eloquent\Model;
+use Nben\FilamentRecordNav\Enums\CustomNavigationPage;
 use Nben\FilamentRecordNav\Enums\NavigationPage;
  
 // Always navigate to the edit page, ignoring the action's NavigationPage setting
-public function getRecordNavigationUrl(Model $record, NavigationPage $page): string
-{
+public function getRecordNavigationUrl(
+    Model $record,
+    NavigationPage|CustomNavigationPage $page
+): string {
     return static::getResource()::getUrl('edit', ['record' => $record]);
+}
+```
+
+Or respect whatever page type was passed, including custom routes:
+
+```php
+public function getRecordNavigationUrl(
+    Model $record,
+    NavigationPage|CustomNavigationPage $page
+): string {
+    // $page->value is 'view', 'edit', or your custom route name
+    return static::getResource()::getUrl($page->value, ['record' => $record]);
 }
 ```
  
@@ -280,7 +341,8 @@ src/
 ├── Contracts/
 │   └── HasRecordNavigation.php         ← optional interface for strict typing
 ├── Enums/
-│   └── NavigationPage.php              ← View | Edit
+│   ├── CustomNavigationPage.php        ← value object for arbitrary route names
+│   └── NavigationPage.php              ← View | Edit | custom()
 └── FilamentRecordNavServiceProvider.php
 ```
  
@@ -296,6 +358,11 @@ On the first call it resolves the adjacent record (via the page's override or
 the config fallback), stores it in `$resolvedRecordCache`, and returns it.
 The second and third closure calls read from the cache - so only **one database
 query** fires per action per render, regardless of how many closures need the result.
+
+When `navigateTo()` receives a `NavigationPage` enum case or a `CustomNavigationPage`
+value object, both expose the same `->value` string property. `resolveUrl()` calls
+`Resource::getUrl($page->value, ['record' => $record])` on either type without any
+`instanceof` branching, keeping the URL resolution path simple and uniform.
  
 No internal Filament lifecycle hooks (`configureAction()`, `bootUsing()`, etc.)
 are used anywhere in the package.
@@ -318,8 +385,15 @@ are used anywhere in the package.
  
 **Wrong page type after navigation**
  
-- Use `->navigateTo(NavigationPage::Edit)` on the action.
+- Use `->navigateTo(NavigationPage::Edit)` on the action for the edit page.
+- Use `->navigateTo(NavigationPage::custom('your-route-name'))` for a custom route.
+- Confirm the route name string passed to `custom()` exactly matches a key in your resource's `getPages()` array.
 - Or override `getRecordNavigationUrl()` in the trait to always return the route you want.
+
+**`InvalidArgumentException` or route not found after using `NavigationPage::custom()`**
+
+- The route name passed to `custom()` must exactly match a key in `getPages()`, including hyphens and casing.
+- Double-check: `'verified-view' => ViewVerifiedUser::route('/{record}/verified')` in `getPages()` matches `NavigationPage::custom('verified-view')` on the action.
  
 **Performance on large tables**
  
@@ -328,6 +402,12 @@ are used anywhere in the package.
  
 ---
  
+## Upgrade Guide (from v2.0.x)
+
+v2.1.0 is fully backward compatible with v2.0.0. No changes are required to
+existing code. The only addition is the `NavigationPage::custom()` named
+constructor and the `CustomNavigationPage` value object that supports it.
+
 ## Upgrade Guide (from v1.x)
  
 v2.0.0 is a full rewrite for Filament v4/v5. Summary of breaking changes:
@@ -336,15 +416,15 @@ v2.0.0 is a full rewrite for Filament v4/v5. Summary of breaking changes:
 |------|------|
 | Trait **required** on the page | Trait **optional** |
 | `configureAction()` hook used internally | Removed - uses `$livewire` injection |
-| No page-type enum | `NavigationPage::View` / `NavigationPage::Edit` |
-| `getRecordUrl(Model $record)` | `getRecordNavigationUrl(Model $record, NavigationPage $page)` |
+| No page-type enum | `NavigationPage::View` / `NavigationPage::Edit` / `NavigationPage::custom()` |
+| `getRecordUrl(Model $record)` | `getRecordNavigationUrl(Model $record, NavigationPage\|CustomNavigationPage $page)` |
 | Filament `^3.0` | Filament `^4.0 \| ^5.0` |
 | PHP `^8.1` | PHP `^8.2` |
  
 **Migration steps:**
  
 1. Remove `configureAction()` from any page classes that overrode it - it is no longer used.
-2. Rename `getRecordUrl(Model $record)` to `getRecordNavigationUrl(Model $record, NavigationPage $page)` wherever you defined it. Import `NavigationPage` at the top of the file.
+2. Rename `getRecordUrl(Model $record)` to `getRecordNavigationUrl(Model $record, NavigationPage|CustomNavigationPage $page)` wherever you defined it. Import both `NavigationPage` and `CustomNavigationPage` at the top of the file.
 3. Add `->navigateTo(NavigationPage::Edit)` to any actions that previously pointed to edit routes via `getRecordUrl()`.
 4. The trait is now optional - you can remove `use WithRecordNavigation` from pages that relied only on the default behaviour (no method overrides).
  
