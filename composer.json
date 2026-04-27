@@ -2,8 +2,8 @@
     "name": "nben/filament-record-nav",
     "type": "library",
     "description": "Next/Previous record navigation for Filament PHP",
-    "keywords": ["filament", "laravel", "navigation", "records"],
-    "homepage": "https://github.com/nb3n/filament-record-nav",
+    "keywords": ["filament", "laravel", "navigation", "records", "php", "admin-panel"],
+    "homepage": "https://rnd.nben.com.np",
     "support": {
         "issues": "https://github.com/nb3n/filament-record-nav/issues",
         "source": "https://github.com/nb3n/filament-record-nav",
