@@ -27,6 +27,10 @@ A Laravel package that adds elegant next/previous record navigation to your Fila
 - Filament `^4.0 | ^5.0`
 
 ## Demo
+Live site: [rnd.nben.com.np](https://rnd.nben.com.np)
+
+[![Watch the demo](https://cdn.rnd.nben.com.np/media/company/record-navigation.webp)](https://rnd.nben.com.np)
+
 ![Package Demo](example.gif)
 
 ## Installation
