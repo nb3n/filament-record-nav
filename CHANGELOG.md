@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v2.1.1] - 2026-06-03
+
+A patch release. No changes are required to existing code.
+
+### Fixed
+
+- **Multi-tenant scope leak** - `defaultAdjacentQuery()` in `ResolvesAdjacentRecord`
+  and `getAdjacentRecord()` in `WithRecordNavigation` previously used `$record->newQuery()`,
+  which bypasses the resource's Eloquent query scopes. Both now call `getEloquentQuery()`
+  when the resource is available, so tenancy scopes and any `modifyQueryUsing()` constraints
+  applied to the resource are respected during navigation.
+
+### Credits
+
+- Thanks to [@Abather](https://github.com/Abather) for reporting the multi-tenant scope issue via [#3](https://github.com/nb3n/filament-record-nav/pull/3).
+
+---
+
 ## [v2.1.0] - 2026-04-13
 
 A backward-compatible feature release. No changes are required to existing code.
