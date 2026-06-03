@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [v2.1.1] - 2026-06-03
+
+some improvements and updates, No changes are required to existing code.
+
+### Updated
+- Use resource eloquent query ```getEloquentQuery()```, so the scopes that applied to the resource are applied into the next, previous record.
+
 ## [v2.1.0] - 2026-04-13
 
 A backward-compatible feature release. No changes are required to existing code.

@@ -176,8 +176,11 @@ trait WithRecordNavigation
         // '<' finds records before the current one, '>' finds records after.
         $operator = $direction === 'previous' ? '<' : '>';
 
-        return $this->getRecord()
-            ->newQuery()
+        $query = method_exists(static::class, 'getResource')
+            ? static::getResource()::getEloquentQuery()
+            : $this->getRecord()->newQuery();
+
+        return $query
             ->where($orderColumn, $operator, $this->getRecord()->{$orderColumn})
             ->orderBy($orderColumn, $orderDirection)
             ->first();
