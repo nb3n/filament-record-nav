@@ -141,8 +141,11 @@ trait ResolvesAdjacentRecord
         // '<' for previous (records with a lower value), '>' for next.
         $operator = $direction === 'previous' ? '<' : '>';
 
-        return $record
-            ->newQuery()
+        $query = method_exists($livewire, 'getResource')
+            ? $livewire::getResource()::getEloquentQuery()
+            : $record->newQuery();
+
+        return $query
             ->where($orderColumn, $operator, $record->{$orderColumn})
             ->orderBy($orderColumn, $orderDirection)
             ->first();
