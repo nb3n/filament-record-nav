@@ -3,6 +3,7 @@
 namespace Nben\FilamentRecordNav\Actions;
 
 use Filament\Actions\Action;
+use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\Size;
 use Livewire\Component;
 use Nben\FilamentRecordNav\Actions\Concerns\ResolvesAdjacentRecord;
@@ -92,11 +93,19 @@ class NextRecordAction extends Action
         parent::setUp();
 
         $this
-            ->hiddenLabel()
+            ->label(function (Component $livewire) {
+                return $this->resolveRecordTitle($livewire, 'next');
+            })
+            ->hiddenLabel(function (Component $livewire) {
+                return !$this->resolveRecordTitle($livewire, 'next');
+            })
             ->button()
             ->outlined()
-            ->icon('heroicon-o-chevron-right')
-            ->tooltip('Next')
+            ->icon(function (Component $livewire) {
+                return $this->resolveIcon($livewire, 'next');
+            })
+            ->iconPosition(config('filament-record-nav.next_icon_position', 'after'))
+            ->tooltip(__('Next'))
             ->size(Size::Medium)
             // Gray when disabled (no next record), primary when active.
             ->color(function (Component $livewire): string {

@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 
 ---
+## [v2.2.0] - 2026
+
+feature release. 
+
+## required changes
+if you publish the confi file ``filament-record-nav`` you should include new keys:
+```php
+return [
+    'display_record_title' => true,
+    
+    'previous_icon' => \Filament\Support\Icons\Heroicon::ChevronLeft,
+    'next_icon' => \Filament\Support\Icons\Heroicon::ChevronRight,
+    
+    'previous_icon_position' => \Filament\Support\Enums\IconPosition::After,
+    'next_icon_position' => \Filament\Support\Enums\IconPosition::Before,
+];
+
+```
+
+### Added
+- display record title in the buttons either the previous or next button, you can enable this 
+  globally by setting ```'display_record_title' => true``` or for specific page by setting an
+  attribute ```public static bool $displayRecordTitle = true``` the page attribute override the global.
+- you can choose the icon for previous and next icon by setting them globally at config file by setting
+  ```previous_icon``` and ```next_icon``` or for page by setting attributes at the page: 
+  ```public static $nextRecordIcon``` and ```public static $previousRecordIcon``` which is behave similer
+  to ```$navigationIcon``` in resource you can pass string|BackedEnum.
+- specify the icon position to the title if applied through config ```previous_icon_position``` and ```next_icon_position```
+
+### Fixed
+- **Missing page** before generating the url check if the page exists in the resource to prevent `RouteNotFoundException`.
 
 ## [v2.1.1] - 2026-06-03
 

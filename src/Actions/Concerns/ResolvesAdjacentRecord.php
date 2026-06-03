@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
 use Nben\FilamentRecordNav\Enums\CustomNavigationPage;
 use Nben\FilamentRecordNav\Enums\NavigationPage;
+use BackedEnum;
+use Closure;
+use Illuminate\Contracts\Support\Htmlable;
 
 /**
  * Shared behaviour for PreviousRecordAction and NextRecordAction.
@@ -98,10 +101,12 @@ trait ResolvesAdjacentRecord
         }
 
         if (method_exists($livewire, 'getResource')) {
-            return $livewire::getResource()::getUrl(
-                $page->value,
-                ['record' => $record]
-            );
+            if($livewire::getResource()::hasPage($page->value)) {
+                return $livewire::getResource()::getUrl(
+                    $page->value,
+                    ['record' => $record]
+                );
+            }
         }
 
         return '#';
@@ -149,5 +154,37 @@ trait ResolvesAdjacentRecord
             ->where($orderColumn, $operator, $record->{$orderColumn})
             ->orderBy($orderColumn, $orderDirection)
             ->first();
+    }
+
+    protected function resolveIcon(Component $livewire, string $direction): BackedEnum|Htmlable|null|string
+    {
+        $property = "{$direction}RecordIcon";
+
+        if (isset($livewire::$$property)) {
+            return $livewire::$$property;
+        }
+
+        $default = $direction === 'next' ? 'heroicon-o-chevron-right' : 'heroicon-o-chevron-left';
+
+        return config("filament-record-nav.{$direction}_icon", $default);
+    }
+
+    protected function resolveRecordTitle(Component $livewire, string $direction):?string
+    {
+        $displayTitle = isset($livewire::$displayRecordTitle)
+            ? $livewire::$displayRecordTitle
+            : config('filament-record-nav.display_record_title');
+
+        if (!$displayTitle) {
+            return null;
+        }
+
+        $record = $this->getCachedRecord($direction, $livewire);
+
+        if (!$record || !method_exists($livewire, 'getResource')) {
+            return null;
+        }
+
+        return $livewire::getResource()::getRecordTitle($record);
     }
 }

@@ -92,11 +92,19 @@ class PreviousRecordAction extends Action
         parent::setUp();
 
         $this
-            ->hiddenLabel()
+            ->label(function (Component $livewire) {
+                return $this->resolveRecordTitle($livewire, 'previous');
+            })
+            ->hiddenLabel(function (Component $livewire) {
+                return !$this->resolveRecordTitle($livewire, 'previous');
+            })
             ->button()
             ->outlined()
-            ->icon('heroicon-o-chevron-left')
-            ->tooltip('Previous')
+            ->icon(function (Component $livewire) {
+                return $this->resolveIcon($livewire, 'previous');
+            })
+            ->iconPosition(config('filament-record-nav.previous_icon_position', 'after'))
+            ->tooltip(__('Previous'))
             ->size(Size::Medium)
             // Gray when disabled (no previous record), primary when active.
             ->color(function (Component $livewire): string {

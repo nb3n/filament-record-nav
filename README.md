@@ -6,6 +6,7 @@ A Laravel package that adds elegant next/previous record navigation to your Fila
 ![PHP Version](https://img.shields.io/badge/php-8.2-blue)
 ![Laravel](https://img.shields.io/badge/Laravel-11.x%20|%2012.x%20|%2013.x-red)
 ![Filament](https://img.shields.io/badge/Filament-4.x%20|%205.x-orange)
+[![Total Downloads](https://img.shields.io/packagist/dt/nben/filament-record-nav.svg?style=flat-square)](https://packagist.org/packages/nben/filament-record-nav)
 
 ## Features
 
@@ -23,7 +24,7 @@ A Laravel package that adds elegant next/previous record navigation to your Fila
 ## Requirements
 
 - PHP `^8.2`
-- Laravel `^10.0 | ^11.0 | ^12.0 | ^13.0`
+- Laravel `^11.0 | ^12.0 | ^13.0`
 - Filament `^4.0 | ^5.0`
 
 ## Demo
@@ -81,7 +82,9 @@ Out of the box the actions will:
 - Order records by the `order_column` defined in config (default: `id`)
 - Render as outlined primary buttons with chevron icons
 - Disable and turn gray when there is no adjacent record (first / last)
+- Display previous/next record title by enabling it at config `display_record_title`
 - Navigate to the `view` page of the adjacent record
+- Ability to customize the previous/next icon.
  
 ---
  
@@ -187,6 +190,13 @@ NextRecordAction::make()
 ```
  
 ---
+
+## Display Record Title
+
+You can display the previos/next record title that is configured in the resource by enabling it globally
+at config file ```'display_record_title' => true,```, or for specific page by setting the attribute ```public static bool $displayRecordTitle = true;```
+
+---
  
 ## Custom Navigation Logic
  
@@ -279,6 +289,21 @@ public function getRecordNavigationUrl(
     return static::getResource()::getUrl($page->value, ['record' => $record]);
 }
 ```
+
+### Setting Icons
+you can set the previous/next icons globally `previous_icon` and `next_icon` you can set it as string or BackedEnum
+similar to `navigationIcon` in the resource, or you can set it in the page directly:
+
+```php
+use Filament\Support\Icons\Heroicon;
+use BackedEnum;
+
+class ViewPost extends ViewRecord
+{
+    public static string|BackedEnum $previousRecordIcon = Heroicon::ArrowRight;
+    public static string|BackedEnum $nextRecordIcon = Heroicon::ArrowLeft;
+}
+```
  
 ### Strict typing with the contract (optional)
  
@@ -306,6 +331,8 @@ class ViewPost extends ViewRecord implements HasRecordNavigation
  
 ```php
 // config/filament-record-nav.php
+ use Filament\Support\Enums\IconPosition;
+ use Filament\Support\Icons\Heroicon;
  
 return [
     /*
@@ -326,6 +353,38 @@ return [
     */
     'previous_direction' => 'desc',
     'next_direction'     => 'asc',
+    
+    
+    /*
+     |--------------------------------------------------------------------------
+     | Display Record Title
+     |--------------------------------------------------------------------------
+     | determine if the title should be displayed in the button
+     */
+    'display_record_title' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Icons Used
+    |--------------------------------------------------------------------------
+    | specified the icons used for next and previous buttons, you can override this
+    | global configuration by adding following attributes to the page:
+    |    public static $previousRecordIcon = Heroicon::SignalSlash;
+    |    public static $nextRecordIcon = Heroicon::CheckCircle;
+    | the value can be string|BackedEnum|Htmlable similar to resource icon
+    */
+    'previous_icon' => Heroicon::ChevronLeft,
+    'next_icon' => Heroicon::ChevronRight,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Icons Position
+    |--------------------------------------------------------------------------
+    | specified the icon position it make different when the record title is enabled,
+    | the value can be string|BackedEnum referee to iconPosition @ filament doc.
+    */
+    'previous_icon_position' => IconPosition::After,
+    'next_icon_position' => IconPosition::Before,
 ];
 ```
  
