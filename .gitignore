@@ -1,2 +1,5 @@
 # Ignore Composer's vendor directory (installed packages)
 vendor/
+
+# Ignore PHPUnit cache files
+.phpunit.result.cache
