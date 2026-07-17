@@ -16,7 +16,7 @@
         "spatie/laravel-permission": "For role-based access control in your admin panel"
     },
     "require": {
-        "php": "^8.2"
+        "php": "^8.3"
     },
     "require-dev": {
         "filament/filament": "^4.0|^5.0",
