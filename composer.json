@@ -20,7 +20,8 @@
     },
     "require-dev": {
         "filament/filament": "^4.0|^5.0",
-        "laravel/pint": "^1.18"
+        "laravel/pint": "^1.18",
+        "phpunit/phpunit": "^10.5"
     },
     "license": "MIT",
     "autoload": {
@@ -30,7 +31,8 @@
     },
     "scripts": {
         "format": "pint",
-        "format:check": "pint --test"
+        "format:check": "pint --test",
+        "test": "phpunit"
     },
     "extra": {
         "laravel": {

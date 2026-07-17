@@ -26,5 +26,8 @@ jobs:
       - name: Check formatting
         run: composer run format:check
 
+      - name: Run tests
+        run: composer run test
+
       - name: Validate composer.json
         run: composer validate --strict
