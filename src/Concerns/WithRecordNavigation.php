@@ -2,6 +2,7 @@
 
 namespace Nben\FilamentRecordNav\Concerns;
 
+use Filament\Resources\Pages\Page;
 use Illuminate\Database\Eloquent\Model;
 use Nben\FilamentRecordNav\Enums\CustomNavigationPage;
 use Nben\FilamentRecordNav\Enums\NavigationPage;
@@ -58,7 +59,7 @@ use Nben\FilamentRecordNav\Enums\NavigationPage;
  *       use WithRecordNavigation;
  *   }
  *
- * @mixin \Filament\Resources\Pages\Page
+ * @mixin Page
  */
 trait WithRecordNavigation
 {
@@ -167,7 +168,7 @@ trait WithRecordNavigation
      */
     protected function getAdjacentRecord(string $direction): ?Model
     {
-        $orderColumn    = config('filament-record-nav.order_column', 'id');
+        $orderColumn = config('filament-record-nav.order_column', 'id');
         $orderDirection = config(
             "filament-record-nav.{$direction}_direction",
             $direction === 'previous' ? 'desc' : 'asc'

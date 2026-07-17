@@ -36,5 +36,5 @@ return [
     |
     */
     'previous_direction' => 'desc',
-    'next_direction'     => 'asc',
+    'next_direction' => 'asc',
 ];

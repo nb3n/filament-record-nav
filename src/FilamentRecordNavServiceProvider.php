@@ -24,7 +24,7 @@ class FilamentRecordNavServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__ . '/../config/filament-record-nav.php' => config_path('filament-record-nav.php'),
+                __DIR__.'/../config/filament-record-nav.php' => config_path('filament-record-nav.php'),
             ], 'filament-record-nav-config');
         }
     }
@@ -39,7 +39,7 @@ class FilamentRecordNavServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $configPath = __DIR__ . '/../config/filament-record-nav.php';
+        $configPath = __DIR__.'/../config/filament-record-nav.php';
 
         if (file_exists($configPath)) {
             $this->mergeConfigFrom($configPath, 'filament-record-nav');

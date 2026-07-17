@@ -52,7 +52,7 @@ trait ResolvesAdjacentRecord
      */
     protected function getCachedRecord(string $direction, Component $livewire): ?Model
     {
-        $cacheKey = $direction . '-' . spl_object_id($livewire);
+        $cacheKey = $direction.'-'.spl_object_id($livewire);
 
         if (array_key_exists($cacheKey, $this->resolvedRecordCache)) {
             return $this->resolvedRecordCache[$cacheKey];
@@ -131,8 +131,8 @@ trait ResolvesAdjacentRecord
             return null;
         }
 
-        $record         = $livewire->getRecord();
-        $orderColumn    = config('filament-record-nav.order_column', 'id');
+        $record = $livewire->getRecord();
+        $orderColumn = config('filament-record-nav.order_column', 'id');
         $orderDirection = config(
             "filament-record-nav.{$direction}_direction",
             $direction === 'previous' ? 'desc' : 'asc'
