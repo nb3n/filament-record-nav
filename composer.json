@@ -19,7 +19,8 @@
         "php": "^8.2"
     },
     "require-dev": {
-        "filament/filament": "^4.0|^5.0"
+        "filament/filament": "^4.0|^5.0",
+        "laravel/pint": "^1.18"
     },
     "license": "MIT",
     "autoload": {
@@ -27,7 +28,10 @@
             "Nben\\FilamentRecordNav\\": "src/"
         }
     },
-    
+    "scripts": {
+        "format": "pint",
+        "format:check": "pint --test"
+    },
     "extra": {
         "laravel": {
             "providers": [
