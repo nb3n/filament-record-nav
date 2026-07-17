@@ -29,9 +29,7 @@ class AdjacentRecordResolutionTest extends TestCase
         {
             use ResolvesAdjacentRecord;
 
-            public function __construct(private readonly Model $record)
-            {
-            }
+            public function __construct(private readonly Model $record) {}
 
             public static function getResource(): string
             {
