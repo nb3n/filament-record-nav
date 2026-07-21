@@ -1,5 +1,43 @@
-# Ignore Composer's vendor directory (installed packages)
-vendor/
+# Composer dependencies
+/vendor/
 
-# Ignore PHPUnit cache files
+# Composer lock file
+composer.lock
+
+# PHPUnit
 .phpunit.result.cache
+coverage/
+coverage.xml
+
+# PHPStan
+phpstan.neon.cache
+.phpstan/
+phpstan-baseline.neon
+
+# Pest
+.pest.cache
+
+# Laravel Pint
+.pint.cache
+
+# IDEs
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Environment files
+.env
+.env.*
+!.env.example
